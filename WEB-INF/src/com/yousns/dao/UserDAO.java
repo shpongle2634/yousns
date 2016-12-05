@@ -1,5 +1,5 @@
 package com.yousns.dao;
 
-public class UserDAO {
+public class UserDAO extends DBConnect{
 
 }

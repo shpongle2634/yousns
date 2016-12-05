@@ -5,8 +5,12 @@ import java.util.Date;
 public class PostVO {
 	private String PostKey;
 	private String UserKey;
-	private String Text;
+	private String Name;
+	private String Content;
 	private String UtubeLink;
+//	private String PhotoPath;
+	private Date date;
+	
 	public String getPostKey() {
 		return PostKey;
 	}
@@ -19,11 +23,11 @@ public class PostVO {
 	public void setUserKey(String userKey) {
 		UserKey = userKey;
 	}
-	public String getText() {
-		return Text;
+	public String getContent() {
+		return Content;
 	}
-	public void setText(String text) {
-		Text = text;
+	public void setText(String content) {
+		Content = content;
 	}
 	public String getUtubeLink() {
 		return UtubeLink;
@@ -37,5 +41,11 @@ public class PostVO {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	private Date date;
+	public String getName() {
+		return Name;
+	}
+	public void setName(String name) {
+		Name = name;
+	}
+	
 }

@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME) //for Reflction
 public @interface RequestMapping {
-	public String value(); //API를 분기할 url Path
+	public String value() default ""; //API를 분기할 url Path
 	public String method() default HTTPMETHOD.GET; //RESTful API Method Type
 }
