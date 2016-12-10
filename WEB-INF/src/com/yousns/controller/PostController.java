@@ -1,56 +1,118 @@
 package com.yousns.controller;
 
-import java.util.ArrayList;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.yousns.dao.PostDAO;
-import com.yousns.dao.StudentDAO;
 import com.yousns.utils.Controller;
 import com.yousns.utils.HTTPMETHOD;
 import com.yousns.utils.Model;
 import com.yousns.utils.RequestMapping;
 import com.yousns.utils.RequestParam;
-import com.yousns.vo.PostVO;
-import com.yousns.vo.UserVO;
 
 @RequestMapping("/posts")
 public class PostController implements Controller{
-	
 
-	
-	@RequestMapping(value = "/new", method = HTTPMETHOD.GET)
-	public String newpost(){	
-		return "Redirect:/posts/jsp/newpostform.jsp"; 
+
+
+
+	//게시물 리스트
+	@RequestMapping(method=HTTPMETHOD.GET)
+	public String posts_list(@RequestParam("page")String page,@RequestParam("rows")String rows, HttpSession session,Model model){
+		if(session.getAttribute("token") ==null){			
+			return "Redirect:/yousns";
+		}
+		else{
+			System.out.println("뉴스피드");
+			model.addAttribute("page", page);
+			model.addAttribute("rows", rows);
+			return "Dispatch:/jsp/posts/posts_list.jsp";
+		}
 	}
-	
-	@RequestMapping(method=HTTPMETHOD.POST)
-	public String postlist(@RequestParam("page") String page, @RequestParam("rows") String rows , Model model,HttpSession session){
-		int pagenum =0;
-		int itemnum = 0;
-		String userkey=null;
 
-		if(page ==null || rows== null){ //badRequest(파라미터 없음)
-			//error
-			model.addAttribute("errcode", new Integer(400));
-			return "Dispatch:/jsp/errorpage";
+	//게시물 상세보기
+	@RequestMapping(value="/{id}", method=HTTPMETHOD.GET)
+	public String posts_view(@RequestParam("id")String postkey, Model model){
+		System.out.println("상세보기");
+		model.addAttribute("postkey", postkey);
+		return "Dispatch:/jsp/posts/posts_view.jsp";
+	}
+
+	//게시물 작성을 위한 페이지
+	@RequestMapping(value = "/new", method = HTTPMETHOD.GET)
+	public String posts_newpage(){
+		System.out.println("게시물 생성페이지");
+		return "Dispatch:/jsp/posts/posts_newpage.jsp"; 
+	}
+	//게시물생성
+	@RequestMapping( method = HTTPMETHOD.POST)
+	public String posts_new(){
+		System.out.println("게시물 생성");
+		return "Dispatch:/jsp/posts/posts_new.jsp"; 
+	}
+	//게시물 수정양식
+	@RequestMapping(value="/{id}/edit", method = HTTPMETHOD.GET)
+	public String posts_editpage(@RequestParam("id")String postkey, Model model){
+		System.out.println("게시물 수정페이지");
+		model.addAttribute("postKey", postkey);
+		return "Dispatch:/jsp/posts/posts_editpage.jsp"; 
+	}
+	//게시물 수정
+	@RequestMapping(value="/{id}", method = HTTPMETHOD.PUT)
+	public String posts_edit(@RequestParam("id")String postkey, Model model){
+		System.out.println("게시물 수정");
+		model.addAttribute("postKey", postkey);
+		return "Dispatch:/jsp/posts/posts_edit.jsp"; 
+	}
+
+	//게시물 삭제
+	@RequestMapping(value ="/{id}", method = HTTPMETHOD.DELETE)
+	public String posts_delete(@RequestParam("id")String postkey, Model model,HttpSession session){
+		if(session.getAttribute("token") ==null){			
+			return "Redirect:/yousns";
 		}
-		
-		pagenum =Integer.parseInt(page);
-		itemnum =Integer.parseInt(rows);
-		userkey= (String)session.getAttribute("userkey");
-		
-		if(userkey ==null){ //비 로그인시
-			return "Redirect:/yousns/jsp/login.jsp";
+		else{
+			System.out.println("게시물 삭제");
+			model.addAttribute("postKey", postkey);
+			return "Dispatch:/jsp/posts/posts_delete.jsp"; 
 		}
-			
-		PostDAO service = new PostDAO(); //DAO 호출
-		ArrayList<PostVO> list = service.getlist(pagenum, itemnum, userkey);
-		model.addAttribute("postlist", list);
-		//something service
-		return "Redirect:/yousns/jsp/postlist.jsp";
-	} 
-	
-	
+	}
+
+	//게시물 신고 양식
+	@RequestMapping(value ="/{id}/reports/new", method = HTTPMETHOD.GET)
+	public String posts_reportpage(@RequestParam("id")String postkey, Model model,  HttpSession session){
+		if(session.getAttribute("token") ==null){			
+			return "Redirect:/yousns";
+		}
+		else{
+			System.out.println("게시물 신고양식");
+			model.addAttribute("postKey", postkey);
+			return "Dispatch:/jsp/posts/posts_reportpage.jsp"; 
+		}
+	}
+
+	//게시물 신고
+	@RequestMapping(value="/reports", method = HTTPMETHOD.POST)
+	public String posts_report(@RequestParam("id")String postkey, Model model,  HttpSession session){
+		if(session.getAttribute("token") ==null){			
+			return "Redirect:/yousns";
+		}
+		else{
+			System.out.println("게시물 신고");
+			model.addAttribute("postKey", postkey);
+			return "Dispatch:/jsp/posts/posts_report.jsp"; 
+		}
+	}
+
+
+	//게시물 좋아요
+	@RequestMapping(value="/{id}", method = HTTPMETHOD.PATCH)
+	public String posts_like(@RequestParam("id")String postkey, Model model,  HttpSession session){
+		if(session.getAttribute("token") ==null){			
+			return "Redirect:/yousns";
+		}
+		else{
+			System.out.println("게시물 좋아요");
+			model.addAttribute("postKey", postkey);
+			return "Dispatch:/jsp/posts/posts_like.jsp"; 
+		}
+	}
 }

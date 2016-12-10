@@ -2,19 +2,23 @@ package com.yousns.vo;
 
 import java.util.Date;
 
+/**
+ * Created by	: Seo Taehoon
+ * Last updated : 2016-12-09
+ */
 public class PostVO {
-	private String PostKey;
+	private int PostKey;
 	private String UserKey;
 	private String Name;
 	private String Content;
 	private String UtubeLink;
-//	private String PhotoPath;
+	private int Likes=0;
 	private Date date;
 	
-	public String getPostKey() {
+	public int getPostKey() {
 		return PostKey;
 	}
-	public void setPostKey(String postKey) {
+	public void setPostKey(int postKey) {
 		PostKey = postKey;
 	}
 	public String getUserKey() {
@@ -46,6 +50,12 @@ public class PostVO {
 	}
 	public void setName(String name) {
 		Name = name;
+	}
+	public int getLikes() {
+		return Likes;
+	}
+	public void setLikes(int likes) {
+		Likes = likes;
 	}
 	
 }

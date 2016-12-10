@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
@@ -31,15 +32,15 @@ public class DispatcherServlet extends HttpServlet {
 
 	/**
 	 * Created by	: Seo Taehoon
-	 * Last updated : 2016-11-25
+	 * Last updated : 2016-12-09
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final HashMap<String, Controller> dispatchMap= new HashMap<>();
-	
+
 	private void controllerMapping() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		String pack = "com.yousns.controller"; //package 이름
 		//		System.out.println(pack);
-		String root ="C:\\Users\\TaeHoon\\Documents\\project\\DBP\\WEB-INF\\src\\";
+		String root ="C:\\Users\\TaeHoon\\git\\yousns\\WEB-INF\\src\\";
 		String urlpath =root+ pack.replace(".","\\");//실제 파일경로
 		//		System.out.println(urlpath);
 
@@ -101,31 +102,71 @@ public class DispatcherServlet extends HttpServlet {
 			value = req.getParameter(paramName.value());
 		}else if(paramName ==null){
 			if(params.getType().equals(HttpSession.class)){
-//				System.out.println("session");
+				//				System.out.println("session");
 				value= req.getSession();
 			}
 			else if(params.getType().equals(HttpServletResponse.class)){
-//				System.out.println("response");
+				//				System.out.println("response");
 				value= res;
 			}else if(params.getType().equals(HttpServletRequest.class)){
-//				System.out.println("response");
+				//				System.out.println("response");
 				value= req;
 			}else if(params.getType().equals(Model.class)){
-//				System.out.println("response");
+				//				System.out.println("response");
 				value= model;
 			}
-				
+
 		}
 		return value;
-		
+
 	}
+	
+	private boolean findpath(String[] requestpath, String[] temppath){
+		boolean flag = false, flag2=true;
+		flag= requestpath.length== temppath.length;
+		if(flag){
+			for(int i =0; i<requestpath.length; i++){
+				if(temppath[i].contains("{") && temppath[i].contains("}"));//skip
+				else {
+					if(!requestpath[i].equals(temppath[i])){
+						flag2=false;
+					}
+				}
+				
+			}
+			
+		}
+		
+		return flag&&flag2;
+	}
+	
+	private void flowControll(HttpServletRequest req,HttpServletResponse res, String result) throws IOException, ServletException{
+		if(result !=null){
+			String s =(String)result;
+			String path= null;
+			boolean isRedirect = s.contains("Redirect:");
+			boolean isDispatch= s.contains("Dispatch:");
+			if(isRedirect) {
+				path= s.substring("Redirect:".length());
+				System.out.println(s+ "  " +path);
+				res.sendRedirect(path);
+			}
+			else if(isDispatch){
+				path= s.substring("Dispatch:".length());
+				System.out.println(s+ "  " +path);
+				RequestDispatcher dispatcher= req.getRequestDispatcher(path);
+				dispatcher.forward(req, res);//디스패치
+			}
+		}
+	}
+	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String requestURI= req.getRequestURI();
 		String contextPath = req.getContextPath();
 
-				System.out.println(requestURI);
+		System.out.println(requestURI);
 		String requesturl = requestURI.substring(contextPath.length());
 		//		System.out.println("requesturl : " +requesturl);
 		int next =requesturl.indexOf('/',1);
@@ -153,13 +194,14 @@ public class DispatcherServlet extends HttpServlet {
 					String[] tempRoute = pathform.split("/");
 
 					if(pathform.equals(requesturl) && r.method().equals(req.getMethod())){//완전히 찾은경우.
-//												System.out.println("normal");
+						System.out.println("normal");
 						if( params ==null ||params.length==0){
-							Object obj = invokeMethod(controller, m, null);
+							String result=(String) invokeMethod(controller, m, null);
+							flowControll(req,res,result);
 						}
 						else {
 							for(int i =0; i< params.length; i++){
-//								System.out.println(params[i].getType());
+								//System.out.println(params[i].getType());
 								Object value =null;
 								value = getParam(params[i],req,res,model);
 								if(!invokeParams.containsKey(i))
@@ -167,36 +209,18 @@ public class DispatcherServlet extends HttpServlet {
 							}
 							if(invokeParams.size() == params.length){ //파라미터 매핑 완료.
 								for(int j = 0; j< params.length; j++){
-//									System.out.println(invokeParams.get(j));
+									//System.out.println(invokeParams.get(j));
 									args.add(invokeParams.get(j));
 								}
-									Object result = invokeMethod(controller,m, args.toArray());
-									if(result !=null){
-										if(result.getClass().equals(String.class)){
-											String s =(String)result;
-											String path= null;
-											boolean isRedirect = s.contains("Redirect:");
-											boolean isDispatch= s.contains("Dispatch:");
-											if(isRedirect) {
-												path= s.substring("Redirect:".length());
-//												RequestDispatcher dispatcher= req.getRequestDispatcher(path);
-//												dispatcher.forward(req, res);//디스패치
-												res.sendRedirect(path);
-											}
-											if(isDispatch){
-												path= s.substring("Dispatch:".length());
-												RequestDispatcher dispatcher= req.getRequestDispatcher(path);
-												dispatcher.forward(req, res);//디스패치
-												
-											}
-										}
-									}
+								String result = (String)invokeMethod(controller,m, args.toArray());
+								flowControll(req,res,result);
 							}							
 						}
 
 					}
 
-					else if(tempRoute.length == targetURLs.length && r.method().equals(req.getMethod())){//HTTP 메소드가 같고,Path 길이가 같은경우.
+					else if(findpath(targetURLs,tempRoute)&& r.method().equals(req.getMethod())){//HTTP 메소드가 같고,Path 길이가 같은경우.
+//						System.out.println(Arrays.toString(tempRoute));
 						//반복문으로 path의 context를 비교하여 정확한 경로를 찾아낸다.
 						//2. 파라미터가 존재. {}가 있으면 괄호를 풀어서 해당 변수이름에 해당하는 파라미터에 실제 url 값을 넣는다.
 						for(int i=0; i< targetURLs.length; i++){
@@ -221,46 +245,29 @@ public class DispatcherServlet extends HttpServlet {
 											}
 										}
 									}
-
-
 								} 
 							}
 						}
 
 						if(invokeParams.size() == params.length){ //파라미터 매핑 완료.
 							for(int j = 0; j< params.length; j++){
-//								System.out.println(invokeParams.get(j));
+								//								System.out.println(invokeParams.get(j));
 								args.add(invokeParams.get(j));
 							}
-								Object result = invokeMethod(controller,m, args.toArray());
-								if(result !=null){
-									if(result.getClass().equals(String.class)){
-										String s =(String)result;
-										String path= null;
-										boolean isRedirect = s.contains("Redirect:");
-										boolean isDispatch= s.contains("Dispatch");
-										if(isRedirect) {
-											path= s.substring("Redirect:".length());
-//											RequestDispatcher dispatcher= req.getRequestDispatcher(path);
-//											dispatcher.forward(req, res);//디스패치
-											res.sendRedirect(path);
-										}
-										if(isDispatch){
-											path= s.substring("Dispatch:".length());
-											RequestDispatcher dispatcher= req.getRequestDispatcher(path);
-											dispatcher.forward(req, res);//디스패치
-											
-										}
-									}
-								}
+							String result = (String)invokeMethod(controller,m, args.toArray());
+							flowControll(req,res,result);
 						}
 					}
 
 				}
 
 			}
-		}			
-		
+		}
+		else{
+			RequestDispatcher dispatcher = req.getRequestDispatcher("/jsp/index.jsp");
+			dispatcher.forward(req, res);
+		}
+
 	}
 
 

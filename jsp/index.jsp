@@ -13,5 +13,11 @@
  session name : <%=session.getAttribute("name")%><br>
  voTest : ${StudentVO.s_name}<br> ${StudentVO.s_id}<br> ${StudentVO.s_pwd} <br>${StudentVO.s_addr}
  
+ <form method="POST" action="http://localhost:8080/yousns/users/auth">
+ 	<input type="text" id="id"/>
+ 	<input type="password" id="password"/>
+ 	<input type="submit" value="login">
+ </form>
+ 
 </body>
 </html>
