@@ -100,6 +100,9 @@ public class DispatcherServlet extends HttpServlet {
 		RequestParam paramName= params.getAnnotation(RequestParam.class);
 		if(paramName !=null){
 			value = req.getParameter(paramName.value());
+
+			System.out.println(paramName.value() + " : "+value);
+			
 		}else if(paramName ==null){
 			if(params.getType().equals(HttpSession.class)){
 				//				System.out.println("session");
@@ -122,10 +125,12 @@ public class DispatcherServlet extends HttpServlet {
 	}
 	
 	private boolean findpath(String[] requestpath, String[] temppath){
+		
 		boolean flag = false, flag2=true;
 		flag= requestpath.length== temppath.length;
 		if(flag){
 			for(int i =0; i<requestpath.length; i++){
+				System.out.println(requestpath[i] + " == " +temppath[i]);
 				if(temppath[i].contains("{") && temppath[i].contains("}"));//skip
 				else {
 					if(!requestpath[i].equals(temppath[i])){
@@ -136,7 +141,6 @@ public class DispatcherServlet extends HttpServlet {
 			}
 			
 		}
-		
 		return flag&&flag2;
 	}
 	
@@ -154,21 +158,27 @@ public class DispatcherServlet extends HttpServlet {
 			else if(isDispatch){
 				path= s.substring("Dispatch:".length());
 				System.out.println(s+ "  " +path);
+//				System.out.println(req.getAttribute("id"));
 				RequestDispatcher dispatcher= req.getRequestDispatcher(path);
 				dispatcher.forward(req, res);//디스패치
+
 			}
 		}
 	}
 	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		res.setContentType("text/html; charset=utf-8");
+		req.setCharacterEncoding("utf-8"); //http 요청/응답 인코딩
 		// TODO Auto-generated method stub
 		String requestURI= req.getRequestURI();
 		String contextPath = req.getContextPath();
 
-		System.out.println(requestURI);
+		System.out.println(requestURI  +" "+ req.getMethod());
 		String requesturl = requestURI.substring(contextPath.length());
 		//		System.out.println("requesturl : " +requesturl);
+		
+			
 		int next =requesturl.indexOf('/',1);
 		//		System.out.println(next);
 		String routePath = (next!=-1) ? requesturl.substring(0, next) : requesturl;
@@ -214,12 +224,14 @@ public class DispatcherServlet extends HttpServlet {
 								}
 								String result = (String)invokeMethod(controller,m, args.toArray());
 								flowControll(req,res,result);
+								break;
 							}							
 						}
 
 					}
 
-					else if(findpath(targetURLs,tempRoute)&& r.method().equals(req.getMethod())){//HTTP 메소드가 같고,Path 길이가 같은경우.
+					else if(findpath(targetURLs,tempRoute)&& r.method().equals(req.getMethod())){
+						System.out.println(m.getName());
 //						System.out.println(Arrays.toString(tempRoute));
 						//반복문으로 path의 context를 비교하여 정확한 경로를 찾아낸다.
 						//2. 파라미터가 존재. {}가 있으면 괄호를 풀어서 해당 변수이름에 해당하는 파라미터에 실제 url 값을 넣는다.
@@ -248,15 +260,18 @@ public class DispatcherServlet extends HttpServlet {
 								} 
 							}
 						}
-
+						System.out.println(invokeParams.size() + " " + params.length);
 						if(invokeParams.size() == params.length){ //파라미터 매핑 완료.
+							System.out.println("invoke");
 							for(int j = 0; j< params.length; j++){
 								//								System.out.println(invokeParams.get(j));
 								args.add(invokeParams.get(j));
 							}
 							String result = (String)invokeMethod(controller,m, args.toArray());
 							flowControll(req,res,result);
+							break;
 						}
+						
 					}
 
 				}

@@ -7,20 +7,20 @@
 	String userKey = (String) session.getAttribute("userKey");
 	String commentKey = request.getParameter("commentKey");
 	String content = request.getParameter("content");
-
+	String postkey= request.getParameter("postkey");
 	boolean success = commentDAO.newCommentOfComment(commentKey, userKey, content);
 	if (success) {
 %>
 <script type="text/javascript">
 	alert('댓글 등록 완료.');
-	location.href = '/posts';
+	location.href='/yousns/posts/<%=postkey%>';
 </script>
 <%
 	} else {
 %>
 <script type="text/javascript">
 	alert('댓글 등록 실패');
-	location.href = '/posts';
+	location.href='/yousns/posts/<%=postkey%>';
 </script>
 <%
 	}

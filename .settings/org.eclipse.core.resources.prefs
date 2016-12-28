@@ -1,5 +1,8 @@
 eclipse.preferences.version=1
 encoding//WEB-INF/src/com/yousns/controller/CommentController.java=UTF-8
+encoding//WEB-INF/src/com/yousns/controller/GroupController.java=UTF-8
+encoding//WEB-INF/src/com/yousns/controller/PageController.java=UTF-8
 encoding//WEB-INF/src/com/yousns/controller/PostController.java=UTF-8
 encoding//WEB-INF/src/com/yousns/controller/SearchController.java=UTF-8
 encoding//WEB-INF/src/com/yousns/controller/UserController.java=UTF-8
+encoding//jsp/search.jsp=UTF-8

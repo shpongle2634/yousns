@@ -4,20 +4,20 @@
 	pageEncoding="utf-8"%>
 <jsp:useBean id="commentDAO" class="com.yousns.dao.CommentDAO" scope="page" />
 <%
-	String commentKey = request.getParameter("commentKey");
+	String commentKey = (String)request.getAttribute("commentkey");
 	boolean success = commentDAO.deleteComment(commentKey);
 	if (success) {
 %>
 <script type="text/javascript">
 	alert('댓글 삭제 완료.');
-	location.href = '/posts';
+	location.href = '/yousns/posts';
 </script>
 <%
 	} else {
 %>
 <script type="text/javascript">
 	alert('댓글 삭제 실패');
-	location.href = '/posts';
+	location.href = '/yousns/posts';
 </script>
 <%
 	}

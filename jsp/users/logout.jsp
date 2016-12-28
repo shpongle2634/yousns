@@ -5,3 +5,7 @@
 		session.invalidate();
 		response.sendRedirect("/yousns");
 %>
+
+<script>
+
+</script>

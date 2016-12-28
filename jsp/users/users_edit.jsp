@@ -3,25 +3,25 @@
 	pageEncoding="utf-8"%>
 <jsp:useBean id="userDAO" class="com.yousns.dao.UserDAO" scope="page" />
 <%
-	String userKey= (String) session.getAttribute("useKey");
+	String userKey= (String) session.getAttribute("userKey");
 	String Email = request.getParameter("Email");
 	String Pwd = request.getParameter("Pwd");
 	String Name = request.getParameter("Name");
 	String Gender = request.getParameter("Gender");
 
-	boolean success = userDAO.updateUser(userKey, Email, Pwd, Name, Short.parseShort(Gender));
+	boolean success = userDAO.updateUser(userKey, Pwd);
 	if (success) {
 %>
 <script type="text/javascript">
 	alert('정보수정 완료.');
-	location.href = '/users/<%=userKey%>/details';
+	location.href = '/yousns/users/<%=userKey%>/edit';
 </script>
 <%
 	} else {
 %>
 <script type="text/javascript">
 	alert('정보수정 실패');
-	location.href = '/users/<%=userKey%>/details';
+	location.href = '/yousns/users/<%=userKey%>/edit';
 </script>
 <%
 	}

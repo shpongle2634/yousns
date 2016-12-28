@@ -13,10 +13,9 @@
 			<param-name>encoding</param-name>
 			<param-value>UTF-8</param-value>
 		</init-param>
-		<async-supported>true</async-supported>
 	</filter>
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>jsp/users/login.jsp</welcome-file>
 	</welcome-file-list>
 	<display-name>YouSNS</display-name>
 	<servlet>
@@ -25,9 +24,25 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FrontController</servlet-name>
-		<url-pattern>/</url-pattern>
+		<url-pattern>/users/*</url-pattern>
 	</servlet-mapping>
-	
-
+	<servlet-mapping>
+		<servlet-name>FrontController</servlet-name>
+		<url-pattern>/posts/*</url-pattern>
+	</servlet-mapping><servlet-mapping>
+		<servlet-name>FrontController</servlet-name>
+		<url-pattern>/search/*</url-pattern>
+	</servlet-mapping><servlet-mapping>
+		<servlet-name>FrontController</servlet-name>
+		<url-pattern>/pages/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FrontController</servlet-name>
+		<url-pattern>/groups/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FrontController</servlet-name>
+		<url-pattern>/comments/*</url-pattern>
+	</servlet-mapping>
 
 </web-app>

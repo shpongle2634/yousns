@@ -4,21 +4,22 @@
 	pageEncoding="utf-8"%>
 <jsp:useBean id="postDAO" class="com.yousns.dao.PostDAO" scope="page" />
 <%
-	String postKey = request.getParameter("postKey");
+	String postKey = (String)request.getAttribute("postKey");
+
+
 	String userKey = (String) session.getAttribute("userKey");
+
 	boolean success = postDAO.likePost(postKey, userKey);
 	if (success) {
 %>
 <script type="text/javascript">
-	alert('좋아요 완료.');
-	history.back();
+	location.href='/yousns/posts';
 </script>
 <%
 	} else {
 %>
 <script type="text/javascript">
-	alert('좋아요 실패');
-	history.back();
+	location.href='/yousns/posts';
 </script>
 <%
 	}

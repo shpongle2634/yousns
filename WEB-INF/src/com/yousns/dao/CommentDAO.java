@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
+import com.yousns.utils.Keygen;
 import com.yousns.vo.CommentVO;
 import com.yousns.vo.PostVO;
 
@@ -19,18 +20,7 @@ import com.yousns.vo.PostVO;
  */
 
 public class CommentDAO extends DBConnect{
-	public static String generateKey(){
-		String key = null;
-		Date current = new Date();
-		SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss", Locale.KOREA);   
-		key =f.format(current);
-		Random rand =new Random();
-		key+=Integer.toString(rand.nextInt(9));
-		key+=Integer.toString(rand.nextInt(9));
-		key+=Integer.toString(rand.nextInt(9));
-		return key;
-
-	}
+	
 	//댓글 생성
 	public boolean newComment(String postKey, String userKey, String content){
 
@@ -40,15 +30,15 @@ public class CommentDAO extends DBConnect{
 		try {
 			conn = super.getConnection();
 			cstmt = conn.prepareCall("{call insert_comment(?,?,?,?)}"); 
-			String commentkey =generateKey();
+			String commentkey =Keygen.generateKey();
 			cstmt.setString(1, commentkey);
 			cstmt.setString(2, postKey);
-			cstmt.setString(3, userKey);
-			cstmt.setString(4, content);
+			cstmt.setString(3, content);
+			cstmt.setString(4, userKey);
 
-			if(cstmt.execute()){
+			cstmt.execute();
 				success=true;
-			}
+			
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -67,15 +57,15 @@ public class CommentDAO extends DBConnect{
 		boolean success = false;
 		try {
 			conn = super.getConnection();
-			cstmt = conn.prepareCall("{call insert_comment_comment(?,?,?,?)}");
-			String newCommentKey= generateKey();
-			cstmt.setString(1, newCommentKey);
-			cstmt.setString(2, commentKey);
-			cstmt.setString(3, userKey);
-			cstmt.setString(4, content);
-			if(cstmt.execute()){
+			cstmt = conn.prepareCall("{call RE_INSERT_COMMENT(?,?,?,?)}");
+			String newCommentKey= Keygen.generateKey();
+			cstmt.setString(1, commentKey);
+			cstmt.setString(2, newCommentKey);
+			cstmt.setString(3, content);
+			cstmt.setString(4, userKey);
+			cstmt.execute();
 				success=true;
-			}
+			
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -95,7 +85,7 @@ public class CommentDAO extends DBConnect{
 		boolean success = false;
 		try {
 			conn = super.getConnection();
-			cstmt = conn.prepareCall("{call update_comment(?,?)}"); 
+			cstmt = conn.prepareCall("{call UPDATE_COMMENT(?,?)}"); 
 			cstmt.setString(1, commentKey);
 			cstmt.setString(2, content);
 			if(cstmt.execute()){
@@ -119,11 +109,11 @@ public class CommentDAO extends DBConnect{
 		boolean success = false;
 		try {
 			conn = super.getConnection();
-			cstmt = conn.prepareCall("{call delete_Comment(?)}"); 
+			cstmt = conn.prepareCall("{call DELETE_COMMENT(?)}"); 
 			cstmt.setString(1, commentKey);
-			if(cstmt.execute()){
+			cstmt.execute();
 				success=true;
-			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,21 +125,20 @@ public class CommentDAO extends DBConnect{
 	}
 
 	//댓글 신고
-	public boolean reportComment(String commentKey, String userKey, String content, short reportflag){
+	public boolean reportComment(String commentKey, String userKey, String content){
 		Connection conn=null;
 		CallableStatement cstmt=null; 
 		boolean success = false;
 		try {
 			conn = super.getConnection();
-			cstmt = conn.prepareCall("{call report_comment(?,?,?,?)}"); 
+			cstmt = conn.prepareCall("{call report_comment(?,?,?)}"); 
 			cstmt.setString(1, commentKey);
 			cstmt.setString(2, userKey);
 			cstmt.setString(3, content);
-			cstmt.setShort(4, reportflag);
 
-			if(cstmt.execute()){
+			cstmt.execute();
 				success=true;
-			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -167,12 +156,12 @@ public class CommentDAO extends DBConnect{
 		boolean success = false;
 		try {
 			conn = super.getConnection();
-			cstmt = conn.prepareCall("{call like_Comment(?,?)}"); 
-			cstmt.setString(1, commentKey);
-			cstmt.setString(2, userKey);
-			if(cstmt.execute()){
+			cstmt = conn.prepareCall("{call insert_like_Comment(?,?)}"); 
+			cstmt.setString(1, userKey);
+			cstmt.setString(2, commentKey);
+			cstmt.execute();
 				success=true;
-			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

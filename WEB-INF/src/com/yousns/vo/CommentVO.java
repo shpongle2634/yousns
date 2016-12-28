@@ -6,12 +6,13 @@ import java.util.ArrayList;
 public class CommentVO {
 	
 	private String CommentKey;
-	private int PostKey;
+	private String PostKey;
 	private String userKey;
 	private String userName;
 	private String Content;
-	
-	private int Likes=0;
+	private int Like_cnt=0;
+	private int comment_cnt=0;
+
 	private Date Written;
 	private ArrayList<CommentVO> ofComments;
 	
@@ -21,10 +22,10 @@ public class CommentVO {
 	public void setCommentKey(String commentKey) {
 		CommentKey = commentKey;
 	}
-	public int getPostKey() {
+	public String getPostKey() {
 		return PostKey;
 	}
-	public void setPostKey(int postKey) {
+	public void setPostKey(String postKey) {
 		PostKey = postKey;
 	}
 	public String getContent() {
@@ -45,12 +46,6 @@ public class CommentVO {
 	public void setOfComments(ArrayList<CommentVO> ofComments) {
 		this.ofComments = ofComments;
 	}
-	public int getLikes() {
-		return Likes;
-	}
-	public void setLikes(int likes) {
-		Likes = likes;
-	}
 	public String getUserKey() {
 		return userKey;
 	}
@@ -62,6 +57,18 @@ public class CommentVO {
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	public int getLike_cnt() {
+		return Like_cnt;
+	}
+	public void setLike_cnt(int like_cnt) {
+		Like_cnt = like_cnt;
+	}
+	public int getComment_cnt() {
+		return comment_cnt;
+	}
+	public void setComment_cnt(int comment_cnt) {
+		this.comment_cnt = comment_cnt;
 	}
 	
 }

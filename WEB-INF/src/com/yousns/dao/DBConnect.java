@@ -12,8 +12,8 @@ public abstract class DBConnect {
 public Connection getConnection() throws SQLException{
 
 		String url="jdbc:oracle:thin:@210.94.199.20:1521:dblab";
-		String user= "ST2012111975";
-		String pass = "ST2012111975";
+		String user= "ST2010112469";
+		String pass = "ST2010112469";
 		return DriverManager.getConnection(url,user,pass);
 		
 	}

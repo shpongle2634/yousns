@@ -1,11 +1,16 @@
 package com.yousns.vo;
 
+import java.util.ArrayList;
+
 public class UserVO {
 	private String UserKey;
 	private String Email;
 	private String Name;
 	private String Pwd;
 	private short Gender;
+	private ArrayList<String> UserGroups;
+	private ArrayList<String> Pages;
+	
 	
 	
 	public String getUserKey() {

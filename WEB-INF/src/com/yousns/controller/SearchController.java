@@ -16,7 +16,7 @@ import com.yousns.utils.RequestParam;
 public class SearchController implements Controller{
 
 	//통합검색
-	@RequestMapping(method = HTTPMETHOD.GET)
+	@RequestMapping(method = HTTPMETHOD.POST)
 	public String comments_delete(@RequestParam("keyword") String keyword, Model model){
 
 			System.out.println("검색");

@@ -1,5 +1,6 @@
 package com.yousns.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.yousns.utils.Controller;
@@ -15,16 +16,18 @@ public class UserController implements Controller{
 	//로그인
 	@RequestMapping(value = "/auth", method = HTTPMETHOD.POST)
 	public String login( @RequestParam("id") String id,  @RequestParam("password") String password,
-			Model model,HttpSession session){
-		model.addAttribute("id", id);
-		model.addAttribute("password", password);
+			HttpServletRequest req ,HttpSession session){
+		req.setAttribute("id", id);
+		req.setAttribute("password", password);
 		System.out.println("로그인 시도 ID : " + id + " Password : " + password);
 		return "Dispatch:/jsp/users/auth.jsp"; 
 	}
 	//로그아웃
-	@RequestMapping(value = "/auth", method = HTTPMETHOD.DELETE)
-	public String logout(){
-		return "Dispatch:/jsp/users/logout.jsp"; 
+	@RequestMapping(value = "/auth/out", method = HTTPMETHOD.GET)
+	public String logout(HttpSession session){
+		System.out.println("로그아웃");
+		session.invalidate();
+		return "Redirect:/yousns"; 
 	}
 	
 	//마이페이지
@@ -32,11 +35,10 @@ public class UserController implements Controller{
 	public String users_view(@RequestParam("id") String id, Model model, HttpSession session){
 		if(session.getAttribute("token") ==null){			
 			return "Redirect:/yousns";
-		}
-		else{
+		}else{
 			System.out.println("마이페이지");
 			model.addAttribute("id", id);
-			return "Dispatch:/jsp/users/users_view.jsp"; 
+			return "Dispatch:/jsp/users/mypage.jsp"; 
 		}
 	}
 
@@ -64,7 +66,7 @@ public class UserController implements Controller{
 		else{
 			System.out.println("상세정보보기");
 			model.addAttribute("id", id);
-			return "Dispatch:/jsp/details_view.jsp"; 
+			return "Dispatch:/jsp/users/details_view.jsp"; 
 		}
 	}
 
@@ -83,7 +85,7 @@ public class UserController implements Controller{
 	}
 
 	//친구 삭제
-	@RequestMapping(value = "/{id}/friends/{fid}", method = HTTPMETHOD.DELETE)
+	@RequestMapping(value = "/{id}/friends/{fid}/delete", method = HTTPMETHOD.GET)
 	public String friends_delete(@RequestParam("fid") String fid,
 			Model model,HttpSession session){
 		if(session.getAttribute("token") ==null){			
@@ -111,7 +113,7 @@ public class UserController implements Controller{
 //	}
 
 	//친구 수락
-	@RequestMapping(value = "/{id}/friends/{fid}/approve", method = HTTPMETHOD.PUT)
+	@RequestMapping(value = "/{id}/friends/{fid}/approve", method = HTTPMETHOD.GET)
 	public String friends_approve( @RequestParam("id") String id,@RequestParam("fid") String fid,
 			Model model,HttpSession session){
 		if(session.getAttribute("token") ==null){			
@@ -125,7 +127,7 @@ public class UserController implements Controller{
 	}
 
 	//친구 신청
-	@RequestMapping(value = "/{id}/friends/{fid}/approve", method = HTTPMETHOD.POST)
+	@RequestMapping(value = "/{id}/friends/{fid}", method = HTTPMETHOD.GET)
 	public String friends_request( @RequestParam("id") String id,@RequestParam("fid") String fid,
 			Model model,HttpSession session){
 		if(session.getAttribute("token") ==null){			
@@ -147,7 +149,7 @@ public class UserController implements Controller{
 	@RequestMapping(method = HTTPMETHOD.POST)
 	public String users_new(){	
 		System.out.println("회원가입");
-		return "Dispatch:/jsp/users/users_new.jsp"; 
+		return "Dispatch:/jsp/users/join.jsp"; 
 	}
 
 //	//회원정보 수정페이지
@@ -163,7 +165,7 @@ public class UserController implements Controller{
 //	}
 	
 	//회원정보 수정
-	@RequestMapping(value = "/{id}", method = HTTPMETHOD.PUT)
+	@RequestMapping(value = "/{id}/edit", method = HTTPMETHOD.POST)
 	public String users_edit( @RequestParam("id") String id,
 			HttpSession session){
 		if(session.getAttribute("token") ==null){			
@@ -180,13 +182,13 @@ public class UserController implements Controller{
 		if(session.getAttribute("token") ==null){			
 			return "Redirect:/yousns";
 		}else{
-			model.addAttribute("id", id);
-			return "Dispatch:/jsp/users/users_posts.jsp"; 
+			model.addAttribute("someonekey", id);
+			return "Dispatch:/jsp/posts/posts_list.jsp"; 
 		}
 	}
 
 	//회원탈퇴
-	@RequestMapping(value = "/{id}", method = HTTPMETHOD.DELETE)
+	@RequestMapping(value = "/{id}/delete", method = HTTPMETHOD.GET)
 	public String users_delete( @RequestParam("id") String id,
 			HttpSession session){
 		if(session.getAttribute("token") ==null){			

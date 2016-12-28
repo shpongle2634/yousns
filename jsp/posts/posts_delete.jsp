@@ -4,20 +4,20 @@
 	pageEncoding="utf-8"%>
 <jsp:useBean id="postDAO" class="com.yousns.dao.PostDAO" scope="page" />
 <%
-	String postKey = request.getParameter("postKey");
+	String postKey = (String)request.getAttribute("postKey");
 	boolean success = postDAO.deletePost(postKey);
 	if (success) {
 %>
 <script type="text/javascript">
 	alert('게시물 삭제 완료.');
-	location.href = '/posts';
+	location.href = '/yousns/posts';
 </script>
 <%
 	} else {
 %>
 <script type="text/javascript">
 	alert('게시물 삭제 실패');
-	location.href = '/posts';
+	location.href = '/yousns/posts';
 </script>
 <%
 	}
